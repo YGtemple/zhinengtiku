@@ -1,107 +1,41 @@
-# zhinengtiku（智能题库与学习分析平台）仓库说明文档
+<div align="right">
 
-> 一句话简介：大学生期末复习智能题库，从战略、架构到安全合规的低成本技术设计文档集。
+**[English](README.md)** · [简体中文](README.zh-CN.md)
 
-> 本说明基于对仓库 `YGtemple/zhinengtiku` 默认分支 `main` 的全量递归读取整理而成。该仓库**不包含可运行的业务代码**，而是一套完整的**技术架构设计文档集**（HTML 在线文档 + Word 版 + 离线导出压缩包）。
+</div>
 
----
+# zhinengtiku
 
-## 一、项目概述与定位
+Architecture documentation for a quiz platform — strategy, system design, API, database, AI service, security and operations.
 
-**zhinengtiku（智能题库与学习分析平台）** 是一份面向"大学生期末复习"场景的题库产品**技术架构设计作品集**（v2.0，文档日期 2026-07-13）。
-
-其核心商业判断是：**避开四六级、考研、公考等红海赛道（已有粉笔、墨墨、扇贝等成熟产品）**，专攻一个被忽视的长尾需求——**"老师期末划定复习范围 → 学生拿着范围找不到针对性练习题"**，由 AI 根据范围生成针对性题目，配合错题本与掌握度分析帮助学生精准提分。
-
-- **目标用户**：大学生（期末复习场景为主），次要用户为教师与内容管理员。
-- **切入策略**：内置一批"开箱即用"的偏文科记忆类题库引流，冷启动期不采购商业题库。
-- **成本哲学**：每个技术选型都给"前期低成本方案 + 后期升级路径"双列，前期月成本控制在 ¥100–350。
-- **四阶段演进**：① MVP 验证（0–3 月）→ ② 功能完善（3–6 月，加 AI 出题/推荐/错题本）→ ③ 商业化（6–12 月，多租户/教师端/会员）→ ④ 生态化（12 月+，开放平台/LMS 集成/微服务 K8s）。
+<sub>HTML + docx · six documents, each in two formats</sub>
 
 ---
 
-## 二、完整目录结构与文件清点
+## What this is
 
-仓库为**平铺结构**（根目录下无子目录），共 **24 个文件、1 个根目录条目**。按类型分为四组：
+A complete architecture document set for a student quiz platform, written before implementation. Six areas, each produced as both an HTML page (for reading) and a docx (for handing in).
 
-### A. 在线导航与正文 HTML（10 个，已全部实际读取）
-| 文件 | 大小(字节) | 内容 |
-|------|-----------|------|
-| `index.html` | 7555 | 文档集**导航封面页**，卡片式链接到 DOC 00–05 |
-| `README.md` | 8505 | 项目说明、架构总览图、成本表、四阶段路径 |
-| `00-战略定位与产品方向.html` | 21852 | 市场/赛道选择、目标用户与四大场景、内置题库选品、成本优先技术策略 |
-| `01-总体架构概览.html` | 51234 | 分层架构图、服务划分与 DDD 限界上下文、成本优化技术栈、部署拓扑、8 条 ADR |
-| `02-API接口设计.html` | 60418 | REST+GraphQL 混合、JWT/OAuth2/API Key、11 个 API 分组、游标分页、错误码、QTI/LTI |
-| `03-数据库设计.html` | 99501 | ER 模型、15+ 核心表 DDL、索引/分区分片、多租户隔离、pgvector/知识图谱 |
-| `04-AI服务设计.html` | 87743 | AI 编排防腐层、RAG 六阶段管道、题目生成四层验证、内容安全、模型/提示词治理、降级 |
-| `05-安全与合规设计.html` | 40762 | 五层纵深防御、多租户三级隔离 + 资源四级可见性、RLS、PIPL/COPPA/GDPR、WCAG 2.2 |
-| `roundtable-review.html` | 101644 | **架构圆桌评审报告**：六位不同领域专家角色对七份文档逐议题讨论，形成 12 项决议 + 23 条行动项 |
-| `智能题库平台-架构深化方案.html` | 72947 | **架构深化方案 v2**：在原大纲上补全 17 个维度的架构决策（多租户、测量学、事件驱动、RAG、灾备/无障碍等） |
+| Document | Covers |
+|---|---|
+| 00 战略定位与产品方向 | positioning and product direction |
+| 01 总体架构概览 / 架构设计 | system architecture |
+| 02 API 接口设计 | API surface |
+| 03 数据库设计 | data model |
+| 04 AI 服务设计 | the AI service layer |
+| 05 安全与合规设计 | security and compliance |
+| 06 运维与部署 | operations and deployment |
 
-### B. Word 版设计文档（7 个，Office 二进制，已解包提取正文要点）
-`00-架构圆桌评审报告.docx`(31849)、`01-架构设计文档.docx`(54064)、`02-API接口文档.docx`(59547)、`03-数据库设计文档.docx`(38824)、`04-AI服务设计文档.docx`(71696)、`05-安全与合规设计文档.docx`(72603)、`06-运维与部署文档.docx`(70721)。
-其中 `06-运维与部署文档.docx` 是**唯一没有对应 HTML** 的文档，补充了 CI/CD、监控告警、日志链路追踪、灾备恢复与 Runbook；其前期方案为单台 VPS（4C8G，约 ¥80/月）上用 Docker Compose 容器化 Nginx + FastAPI + PostgreSQL16/pgvector + Redis + Celery Worker，前端部署 Vercel 免费层、文件存 Cloudflare R2、AI 调 DeepSeek API；后期升级 K8s 多节点。
+There is also a roundtable review document — a critique of the architecture by several reviewers, kept alongside the design it criticises.
 
-### C. 离线导出压缩包（7 个，二进制 zip，未逐字节读取正文）
-`index.html.zip`、`00-战略定位与产品方向.html.zip`、`01-总体架构概览.html.zip`、`02-API接口设计.html.zip`、`03-数据库设计.html.zip`、`04-AI服务设计.html.zip`、`05-安全与合规设计.html.zip`——**每个均为 1,236,456 字节**（MD5 各不相同但内容结构一致）。解包核对发现：每个 zip 都是一份"整站离线包"，内含全部 6 篇 HTML + `_shared/fonts/`（WorkSans/InstrumentSans/JetBrainsMono 多个 .ttf 字体）+ `_shared/js/mermaid.min.js`（约 2.5MB 的图表渲染库）。即它们是带本地字体和 Mermaid 的可离线打开的整站快照。
+## Why two formats
 
-### D. 二进制资源说明
-- 上述 **7 个 .zip 离线包**与其中打包的 **.ttf 字体文件、mermaid.min.js** 属二进制资源，未逐段读取其代码正文；其中 mermaid.min.js 为第三方图表库，仅用于渲染文档内的 `flowchart`/`erDiagram` 等架构图。
-- 仓库**根目录的 `_shared/` 文件夹并不存在**（它只被打包在 zip 里），因此在 GitHub 上直接浏览 HTML 时，自定义字体与 Mermaid 图表可能无法原样渲染。
+The HTML version is what you read: tables, diagrams and cross-references work better on a screen. The docx version is what gets submitted. Keeping both means neither audience is served badly.
 
----
+## Note
 
-## 三、各文档核心内容解读
+This is design documentation, not a running system. Where it describes behaviour, it describes intended behaviour.
 
-### 3.1 战略与产品（DOC 00）
-四大学生场景：A) 拍照上传老师复习范围→AI 出题；B) 选内置章节直接刷题；C) 上传往年母题→生成同知识点变体；D) 考前按错题本/薄弱点生成"必练 30 题"。内置题库选品**偏文科记忆类优先**（英语词汇语法、文史概念），回避计算复杂的高中数学、物理图表题与编程判题。
+## License
 
-### 3.2 总体架构（DOC 01）
-分层为 **前端客户端层（学生端/教师端/Admin，React+Vite，Vercel）→ API 网关层（JWT/OAuth2、限流）→ 后端服务层（用户/题库/练习/AI/分析/推荐/管理 等模块化服务，FastAPI）→ 数据存储层（PostgreSQL + pgvector + Redis + 对象存储）**，AI 模型层横向贯穿。设计上明确"不做四六级/考研、不做通用刷题、不做编程题与证明题、阶段三前不做 CAT 自适应测试"。
-
-### 3.3 API 设计（DOC 02）
-REST 为主（约 85%，承载 CRUD/写操作/文件上传/Webhook），GraphQL 为辅（约 15%，承载学习分析仪表盘、知识图谱遍历、错题多维筛选等聚合读，单一端点 `/api/v1/graphql`）。采用 URI 版本控制（`/api/v1`，旧版至少维护 12 个月）、名词复数资源、批量端点（单次上限 50 条，超出返回 422）、游标分页、HATEOAS 超媒体，OpenAPI 3.0 + Swagger 文档化，并预留 QTI/LTI 1.3 教育标准集成接口。
-
-### 3.4 数据库设计（DOC 03）
-主库 **PostgreSQL 16**（前期 Supabase/Neon 免费层 500MB），知识结构采用"树 + 图"双模型：知识点用 `parent_id` 维护包含树，先修/关联等图关系独立存 `knowledge_relations`。题目以聚合根 + `question_versions` 版本表留痕。新增 `ExamScopeImport`（考试范围导入）与 `QuestionBankSeed`（内置题库种子）两个核心实体。写入最频繁的 `answer_records` 按 `answered_at` 范围分区 + 按 `user_id` 哈希子分区。向量检索前期复用 pgvector，知识图谱前期用 PG 递归 CTE，后期再升级 Milvus / Neo4j。
-
-### 3.5 AI 服务设计（DOC 04）
-设独立 **AI 编排服务作为"防腐层"**——业务系统不直连模型，一切 AI 请求经编排层统一路由/鉴权/日志/降级。模型前期用 **DeepSeek API（约 ¥1/百万 token 输入、¥2/百万输出）**，后期升级 GPT-4o / Claude 3.5。能力覆盖：文档解析与 OCR、知识点提取匹配、题目/答案/解析生成、主观题 AI 辅助初评、RAG 检索增强、提示词与模型版本管理、调用打标成本归因。内容安全前期为关键词过滤+规则引擎，后期升级 Azure Content Safety 多层过滤，并设计了模型不可用时的降级链。
-
-### 3.6 安全与合规（DOC 05）
-**五层纵深防御**：网络层（WAF/DDoS/TLS1.2-1.3）→ 接入层（网关/认证/限流熔断）→ 应用层（RBAC/输入校验/输出编码）→ 数据层（加密/脱敏/租户隔离/审计日志）→ AI 层（内容安全过滤/Prompt 注入防护）。多租户支持三级隔离（共享库+tenant_id / Schema 隔离 / 库隔离），资源可见性分四级（私有/班级/租户/平台公共），并用 PostgreSQL 行级安全（RLS）在数据库层兜底防止越权。合规对标 PIPL、COPPA、GDPR，并要求 WCAG 2.2 AA 无障碍。
-
-### 3.7 圆桌评审与深化方案
-- **roundtable-review.html**：六位分属产品战略、系统架构、AI 工程、安全合规、后端、运维的专家角色，对七份文档逐议题展开辩论（专家姓名为文档中虚构的讨论角色，此处不列举）。典型争议包括：大学生期末复习与内置小初高题库学段错位、大学高数计算/证明题的 AI 生成风险与边界（建议 MVP 只覆盖选择/填空/判断）等，最终收敛为 12 项决议与 23 条行动项。
-- **架构深化方案.html**：把原"功能清单"升级为"可工程化落地的架构体系"，从结构性缺失（多租户、领域边界、事件驱动）、质量与可靠性治理（题目测量学标定、AI 生成验证、数据最终一致）、运营韧性（可观测、成本治理、合规）三个层次补全决策。
-
----
-
-## 四、技术栈与依赖（设计层面）
-
-| 层 | 前期低成本方案 | 后期升级路径 |
-|----|----------------|--------------|
-| 前端 | React + Vite，Vercel/Netlify 免费层 | CDN + 独立服务器 |
-| 后端 | FastAPI(Python) 模块化单体，Render/Railway 或单 VPS | Spring Boot / 微服务拆分 |
-| 关系库 | PostgreSQL（Supabase/Neon 免费层） | 自建 PG + 只读副本 |
-| 向量检索 | pgvector（复用 PG） | Milvus / Qdrant |
-| 缓存/队列 | Redis（Upstash 免费层）+ Celery | Redis 集群 + RabbitMQ/Kafka |
-| AI 模型 | DeepSeek API（低成本） | GPT-4o / Claude / 自建微调 |
-| 文件存储 | Cloudflare R2 | 对象存储扩容 |
-| 部署 | 单机 Docker Compose | K8s 多节点集群 |
-| 图表渲染 | 第三方 Mermaid（文档内置离线包） | — |
-
-注意：以上均为**文档中的设计选型**，仓库内**没有任何对应的实际工程代码**。
-
----
-
-## 五、运行/查看方式
-
-- 这是一套**纯静态文档**：直接用浏览器打开 `index.html` 即可获得导航页并跳转到各篇文档（前提是连同 `_shared/` 字体与 mermaid 一起离线打开；在 GitHub 网页上直接查看时图表/字体可能不渲染）。
-- 不提供可运行的后端或前端应用，也无需安装依赖；Word 版为同名设计文档的 .docx 备份。
-
----
-
-## 六、项目特点与适用场景
-
-- **特点**：文档体系完整、六维覆盖（战略/架构/API/数据库/AI/安全）且附运维篇与圆桌评审；贯穿"成本优先、预留升级路径"的创业思路；强调多租户、未成年人合规与教育标准互操作（QTI/LTI）。
-- **适用场景**：作为教育类 AI 产品的**架构设计参考样例/技术作品集**，用于给团队对齐"系统长什么样、先做什么、前期花多少钱"，或作为题库/SaaS 类系统设计的写作模板；并非一个可以直接部署上线的成品系统。
+MIT
